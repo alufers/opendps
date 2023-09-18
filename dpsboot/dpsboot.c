@@ -319,7 +319,7 @@ int main(void)
 #endif // GIT_VERSION
 
         if (bootcom_get(&magic, &temp) && magic == 0xfedebeda) {
-            /** We got invoced by the app */
+            /** We got invoked by the app */
             chunk_size = temp >> 16;
             fw_crc16 = temp & 0xffff;
             enter_upgrade = true;
