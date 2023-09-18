@@ -27,6 +27,7 @@ jobs:
     - name: Build Project
       run: |
         make -j -C libopencm3
+        make -j -C dpsboot
         make -C opendps fonts
         make -C opendps elf bin MODEL=DPS5005
         make -C opendps elf bin MODEL=DPS5015 
