@@ -12,13 +12,11 @@ all:
 	$(Q)$(MAKE) $(MFLAGS) -C libopencm3 TARGETS=stm32/f1
 	$(Q)$(MAKE) $(MFLAGS) -C opendps
 	$(Q)$(MAKE) $(MFLAGS) -C dpsboot
-	$(Q)$(MAKE) $(MFLAGS) -C esp8266-proxy
 
 clean:
 	$(Q)$(MAKE) $(MFLAGS) -C libopencm3 $@
 	$(Q)$(MAKE) $(MFLAGS) -C opendps $@
 	$(Q)$(MAKE) $(MFLAGS) -C dpsboot $@
-	$(Q)$(MAKE) $(MFLAGS) -C esp8266-proxy $@
 
 flash:
 	$(Q)$(MAKE) $(MFLAGS) -C opendps $@
