@@ -28,12 +28,12 @@ Convert an image to a packed mono 2bpp byte array
 """
 def image_to_mono2bpp(im):
     image_bytes = im.tobytes("raw", "R") # Create a byte array from the red channel of the input image
-    image_bytes += '\0\0\0' # Dummy value at the end for alignment
+    image_bytes += b'\0\0\0' # Dummy value at the end for alignment
 
     # Convert 8bpp to packed 2bpp
     mono2array = []
-    for x in range(len(image_bytes) / 4):
-        mono2array.append(int(ord(image_bytes[x*4+3]) / 64.0) << 6 | int(ord(image_bytes[x*4+2]) / 64.0) << 4 | int(ord(image_bytes[x*4+1]) / 64.0) << 2 | int(ord(image_bytes[x*4]) / 64.0))
+    for x in range(len(image_bytes) // 4):
+        mono2array.append(int(image_bytes[x*4+3] / 64.0) << 6 | int(image_bytes[x*4+2] / 64.0) << 4 | int(image_bytes[x*4+1] / 64.0) << 2 | int(image_bytes[x*4] / 64.0))
 
     return mono2array
 
@@ -56,7 +56,7 @@ def image_to_bgr565(im):
 Generate the lookup table for bytes consisting of packed 2bpp pixels
 """
 def generate_pixel_lookup_table(output_filename):
-    print "Generating lookup table for pixels as %s.c/.h" % (output_filename)
+    print("Generating lookup table for pixels as %s.c/.h" % (output_filename))
     source_filename = "%s.c" % (output_filename)
     header_filename = "%s.h" % (output_filename)
 
@@ -148,14 +148,15 @@ def get_space_width(font_fname, font_size):
     font = ImageFont.truetype(font_fname, font_size)
     dummy = Image.new("RGB", (100,100), (0,0,0))
     draw = ImageDraw.Draw(dummy)
-    (width,_) = draw.textsize(' ', font=font)
+    (size, _) = font.font.getsize(" ")
+    width = size[0]
     return width
 
 """
 Convert the specified font to a pair of .c/.h C language lookup tables in mono 2bpp format
 """
 def convert_font_to_c(font_fname, characters, font_size, font_spacing, output_filename):
-    print "Converting %s %dpt to font-%s.c/h" % (font_fname, font_size, output_filename)
+    print("Converting %s %dpt to font-%s.c/h" % (font_fname, font_size, output_filename))
 
     character_images = generate_font_images(font_fname, characters, font_size)
     (_, character_heights) = character_images[0].size
@@ -172,7 +173,7 @@ def convert_font_to_c(font_fname, characters, font_size, font_spacing, output_fi
     # Measure the space character width
     space_width = get_space_width(font_fname, font_size)
     character_widths[ord(' ')-0x20] = space_width
-
+    
     # Generate the output filenames
     font_source_filename = "font-%s.c" % (output_filename)
     font_header_filename = "font-%s.h" % (output_filename)
@@ -294,7 +295,7 @@ def convert_font_to_c(font_fname, characters, font_size, font_spacing, output_fi
 Convert the specified font to a pair of .c/.h C language lookup tables in BGR565 format
 """
 def convert_graphic_to_c(graphic_fname, output_filename):
-    print "Converting %s to gfx-%s.c/h" % (graphic_fname, output_filename)
+    print("Converting %s to gfx-%s.c/h" % (graphic_fname, output_filename))
 
     graphic_image = Image.open(graphic_fname)
 
