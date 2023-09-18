@@ -10,6 +10,8 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
+      with:
+        submodules: recursive
     - name: Install Ubuntu dependencies
       run: |
         sudo apt-get update
