@@ -41,7 +41,7 @@ BMP_PORT	?=
 # texane/stlink specific variables
 #STLINK_PORT	?= :4242
 
-ROOT=$(shell git rev-parse --show-toplevel)
+ROOT?=$(shell git rev-parse --show-toplevel)
 
 # DPS5005
 ifeq ($(strip $(OPENCM3_DIR)),)
