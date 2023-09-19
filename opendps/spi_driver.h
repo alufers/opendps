@@ -25,6 +25,8 @@
 #ifndef __SPI_DRIVER_H__
 #define __SPI_DRIVER_H__
 
+#include <stdbool.h>
+
 /**
   * @brief Initialize the SPI driver
   * @retval None

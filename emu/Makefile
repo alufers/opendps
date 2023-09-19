@@ -1,7 +1,25 @@
 TARGET = dpsemu
 LIBS = -lm -lpthread
 CC = gcc
-CFLAGS = -m32 -g -Wall -I. -I../opendps -DCONFIG_DPS_MAX_CURRENT=5000 -Ddbg_printf=printf -DDPS5005 -DDPS_EMULATOR -DCONFIG_CC_ENABLE -DCOLOR_INPUT=WHITE -DCOLOR_VOLTAGE=WHITE -DCOLOR_AMPERAGE=WHITE -Wmissing-braces
+CFLAGS = \
+		-m32 \
+		-g \
+		-Wall \
+		-I. \
+		-I../opendps \
+		-DCONFIG_DPS_MAX_CURRENT=5000 \
+		-Ddbg_printf=printf \
+		-DDPS5005 \
+		-DDPS_EMULATOR \
+		-DCONFIG_CC_ENABLE \
+		-DCOLOR_INPUT=WHITE \
+		-DCOLOR_VOLTAGE=WHITE \
+		-DCOLOR_AMPERAGE=WHITE \
+		-DCOLORSPACE=0 \
+		-Wmissing-braces \
+		-lSDL2 \
+		-lSDL2_image \
+		$(shell sdl2-config --cflags --libs)
 
 .PHONY: default all clean
 
@@ -43,6 +61,8 @@ SRCS = opendps.c \
     gfx-wifi.o \
 	gfx-power.o \
 	settings_calibration.o \
+	gfx_lookup.c \
+	ili9163c.c
 
 #OBJECTS = $(patsubst ../%, %, $(patsubst %.c, %.o, $(SRCS)))
 OBJECTS = $(patsubst %.c, %.o, $(SRCS))

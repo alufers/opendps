@@ -155,7 +155,7 @@ void* event_thread(void *arg)
         printf("[Evt] Received %lu bytes from %s:%d [%s]\n", recv_len, inet_ntoa(client_sock.sin_addr), ntohs(client_sock.sin_port), buf);
         if (strcmp("draw", buf) == 0) {
             printf("Drawing UI\n");
-            emul_tft_draw();
+           
             printf("---\n");
         }
     }
