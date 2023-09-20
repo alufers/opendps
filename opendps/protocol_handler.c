@@ -64,7 +64,9 @@ static bool receiving_frame = false;
 static void send_frame(const frame_t *frame)
 {
 #ifdef DPS_EMULATOR
+    #if CONFIG_EMULATOR_NETWORKING
     dps_emul_send_frame(frame);
+    #endif
 #else // DPS_EMULATOR
     for (uint32_t i = 0; i < frame->length; ++i)
         usart_send_blocking(USART1, frame->buffer[i]);

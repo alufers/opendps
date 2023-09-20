@@ -1,6 +1,6 @@
 TARGET = dpsemu
 LIBS = -lm -lpthread
-CC = gcc
+CC ?= gcc
 CFLAGS = \
 		-m32 \
 		-g \
@@ -17,9 +17,9 @@ CFLAGS = \
 		-DCOLOR_AMPERAGE=WHITE \
 		-DCOLORSPACE=0 \
 		-Wmissing-braces \
-		-lSDL2 \
-		-lSDL2_image \
-		$(shell sdl2-config --cflags --libs)
+		$(shell sdl2-config --cflags --libs) \
+		$(shell pkg-config --cflags --libs SDL2_image) \
+		-o output.html
 
 .PHONY: default all clean
 
@@ -62,7 +62,7 @@ SRCS = opendps.c \
 	gfx-power.o \
 	settings_calibration.o \
 	gfx_lookup.c \
-	ili9163c.c
+	ili9163c_emu.c
 
 #OBJECTS = $(patsubst ../%, %, $(patsubst %.c, %.o, $(SRCS)))
 OBJECTS = $(patsubst %.c, %.o, $(SRCS))

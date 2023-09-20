@@ -30,8 +30,7 @@
 #include <pthread.h>
 #include <unistd.h>
 #include <semaphore.h>
-#include <sys/socket.h>
-#include <arpa/inet.h>
+
 #include "dpsemul.h"
 #include "flash.h"
 #include "event.h"
@@ -39,12 +38,17 @@
 #include "dbg_printf.h"
 #include "uframe.h"
 
+#ifdef CONFIG_EMULATOR_NETWORKING
+
+#include <sys/socket.h>
+#include <arpa/inet.h>
+
 #define UDP_RX_BUF_LEN       (512)
 #define DPS_PORT            (5005)
 #define EVENT_PORT          (5006)
 
 /** Handles to the comms thread and event thread */
-pthread_t udp_th, event_th;
+pthread_t udp_th;
 
 /** UDP socket handle */
 int comm_sock;
@@ -115,54 +119,8 @@ void* comm_thread(void *arg)
     return NULL;
 }
 
-/**
- * @brief      This is the UDP communications thread
- *
- * @param[in]  arg   thread arguments
- */
-void* event_thread(void *arg)
-{
-    printf("Event thread listening on UDP port %d\n", EVENT_PORT);
-    struct sockaddr_in si_me;
-    size_t recv_len;
-    char buf[UDP_RX_BUF_LEN];
-    struct sockaddr_in client_sock;
-    socklen_t slen = sizeof(client_sock);
-    int sock;
+#endif
 
-    if ((sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) == -1) {
-        printf("Error: socket\n");
-        exit(EXIT_FAILURE);
-    }
-    
-    memset((char *) &si_me, 0, sizeof(si_me));
-    si_me.sin_family = AF_INET;
-    si_me.sin_port = htons(EVENT_PORT);
-    si_me.sin_addr.s_addr = htonl(INADDR_ANY);
-    
-    if(bind(sock, (struct sockaddr*)&si_me, sizeof(si_me) ) == -1) {
-        printf("Error: could not bind to port %d\n", DPS_PORT);
-    }
-    
-    while(1) {
-        if ((recv_len = recvfrom(sock, buf, UDP_RX_BUF_LEN, 0, (struct sockaddr *) &client_sock, &slen)) == -1) {
-            printf("Error: recvfrom()\n");
-        }
-        if (buf[recv_len-1] == '\n') {
-            buf[recv_len-1] = 0;
-            recv_len--;
-        }
-        printf("[Evt] Received %lu bytes from %s:%d [%s]\n", recv_len, inet_ntoa(client_sock.sin_addr), ntohs(client_sock.sin_port), buf);
-        if (strcmp("draw", buf) == 0) {
-            printf("Drawing UI\n");
-           
-            printf("---\n");
-        }
-    }
-    
-    //close(sock);
-    return NULL;
-}
 
 /**
  * @brief      Emulator init
@@ -173,10 +131,9 @@ void* event_thread(void *arg)
 void dps_emul_init(past_t *past, int argc, char const *argv[])
 {
 	printf("OpenDPS Emulator\n");
-
+    #ifdef CONFIG_EMULATOR_NETWORKING
     pthread_create(&udp_th, NULL, comm_thread, "UDP comms thread");
-    pthread_create(&event_th, NULL, event_thread, "UDP event thread");
-
+    #endif
     size_t optind;
     char *file_name = 0;
     bool write_past = false;
